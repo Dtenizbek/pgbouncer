@@ -1,0 +1,18 @@
+[Unit]
+Description=pgBouncer connection pooling for PostgreSQL
+
+[Service]
+Type=forking
+User=postgres
+Group=postgres
+
+PermissionsStartOnly=true
+ExecStartPre=-/bin/mkdir -p /var/run/postgresql /var/log/postgresql
+ExecStartPre=/bin/chown -R postgres:postgres /var/run/postgresql /var/log/postgresql
+
+ExecStart=/usr/sbin/pgbouncer -d /etc/pgbouncer/pgbouncer.ini
+ExecReload=/bin/kill -SIGHUP $MAINPID
+PIDFile=/var/run/postgresql/pgbouncer.pid
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,17 @@
+---
+- name: Provision pgbouncer server
+  hosts: pgbouncer
+  become: true
+  roles:
+    - role: pgbouncer
+  vars:
+    pg_auth_user: "postgres"
+    pg_auth_user_pass: "gfhjkm"
+    pg_server_ip: 10.206.68.2
+    pg_server_port: 5432
+    pg_server_auth_user: postgres
+    pg_server_user_pass: gfhjkm
+    pgbouncer_pool_mode: session
+    pgbouncer_max_client_conn: 300
+    pgbouncer_default_pool_size: 25
+

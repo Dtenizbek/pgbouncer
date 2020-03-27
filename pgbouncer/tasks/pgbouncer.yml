@@ -1,0 +1,56 @@
+---
+- name: Install pgbouncer
+  apt:
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages:
+      - pgbouncer
+      - postgresql-client  
+  tags: pgbouncer
+
+- name: Restart and enable pgbouncer
+  service:
+    name: pgbouncer
+    state: stopped
+    enabled: no
+  tags: pgbouncer
+
+- name: Copy pgbouncer config
+  template:
+    src: pgbouncer.ini.j2
+    dest: /etc/pgbouncer/pgbouncer.ini
+    owner: postgres
+    group: postgres
+    mode: 0640
+  tags: pgbouncer
+
+- name: Copy userlist 
+  template:
+    src: userlist.txt.j2
+    dest: /etc/pgbouncer/userlist.txt
+    owner: postgres
+    group: postgres
+    mode: 0640
+  tags: pgbouncer
+
+- name: Copy pgbouncer unit file
+  copy:
+    src: pgbouncer.service
+    dest: /etc/systemd/system/pgbouncer.service
+    owner: root
+    group: root
+    mode: 0664
+  tags: pgbouncer
+
+- name: Reload daemon
+  systemd:
+    daemon_reload: yes
+  tags: pgbouncer
+
+- name: Start and enable patroni service
+  systemd:
+    name: pgbouncer
+    state: restarted
+    enabled: yes
+  tags: pgbouncer
